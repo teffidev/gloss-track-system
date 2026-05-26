@@ -101,6 +101,7 @@ if (!product) {
       sku: formData.get("sku"),
       price: Number(formData.get("price")),
       stock: Number(formData.get("stock")),
+      supplierId: formData.get("supplierId") || null,
     };
 
     const response = await fetch(`/api/products/${id}`, {

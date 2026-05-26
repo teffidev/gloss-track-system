@@ -1,5 +1,8 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
+import { prisma } from "@/lib/prisma";
+
+const suppliers = await prisma.supplier.findMany();
 ---
 
 <AppLayout title="New Product">
@@ -43,6 +46,22 @@ import AppLayout from "@/layouts/AppLayout.astro";
             step="0.01"
             class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
           />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium"> Supplier </label>
+
+          <select
+            name="supplierId"
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary">
+            <option value=""> Select supplier </option>
+
+            {
+              suppliers.map((supplier) => (
+                <option value={supplier.id}>{supplier.name}</option>
+              ))
+            }
+          </select>
         </div>
 
         <div>
@@ -90,6 +109,7 @@ import AppLayout from "@/layouts/AppLayout.astro";
       sku: formData.get("sku"),
       price: Number(formData.get("price")),
       stock: Number(formData.get("stock")),
+      supplierId: formData.get("supplierId") || null,
     };
 
     const response = await fetch("/api/products/", {

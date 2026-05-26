@@ -3,6 +3,9 @@ import AppLayout from "@/layouts/AppLayout.astro";
 import { prisma } from "@/lib/prisma";
 
 const products = await prisma.product.findMany({
+  include: {
+    supplier: true,
+  },
   orderBy: {
     createdAt: "desc",
   },
@@ -36,6 +39,8 @@ const checkLowStock = (stock: number) => stock <= 5;
 
           <th class="px-6 py-4 text-left text-sm font-semibold"> Price </th>
 
+          <th class="px-6 py-4 text-left text-sm font-semibold"> Supplier </th>
+
           <th class="px-6 py-4 text-left text-sm font-semibold"> Stock </th>
 
           <th class="px-6 py-4 text-left text-sm font-semibold"> Status </th>
@@ -50,6 +55,7 @@ const checkLowStock = (stock: number) => stock <= 5;
               <td class="px-6 py-4 font-medium"> {product.name} </td>
               <td class="px-6 py-4 text-textSecondary"> {product.sku} </td>
               <td class="px-6 py-4"> ${product.price} </td>
+              <td class="px-6 py-4"> {product.supplier?.name || "No supplier"} </td>
               <td class="px-6 py-4"> {product.stock} </td>
               <td class="px-6 py-4">
                 {checkLowStock(product.stock) ? (
