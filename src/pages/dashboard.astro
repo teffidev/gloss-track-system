@@ -1,0 +1,25 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+---
+
+<AppLayout title="Dashboard">
+  <div class="grid grid-cols-3 gap-6">
+    <div class="rounded-2xl bg-white p-6 shadow-sm">
+      <p class="text-textSecondary">Total Products</p>
+
+      <h3 class="mt-2 text-3xl font-bold">124</h3>
+    </div>
+
+    <div class="rounded-2xl bg-white p-6 shadow-sm">
+      <p class="text-textSecondary">Low Stock</p>
+
+      <h3 class="mt-2 text-3xl font-bold text-stockLowText">12</h3>
+    </div>
+
+    <div class="rounded-2xl bg-white p-6 shadow-sm">
+      <p class="text-textSecondary">Suppliers</p>
+
+      <h3 class="mt-2 text-3xl font-bold">8</h3>
+    </div>
+  </div>
+</AppLayout>

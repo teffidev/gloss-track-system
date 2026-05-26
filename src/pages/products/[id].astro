@@ -1,0 +1,122 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import { prisma } from "@/lib/prisma";
+
+const { id } = Astro.params;
+
+const product = await prisma.product.findUnique({
+  where: {
+    id,
+  },
+});
+
+if (!product) {
+  return Astro.redirect("/products");
+}
+---
+
+<AppLayout title="Edit Product">
+  <div class="max-w-5xl mx-auto">
+    <div>
+      <h1 class="text-3xl font-bold">Edit Product</h1>
+
+      <p class="mt-1 text-textSecondary">Update product information</p>
+    </div>
+
+    <form
+      id="edit-product-form"
+      class="mt-8 rounded-2xl bg-white p-8 shadow-sm">
+      <div class="grid gap-6">
+        <div>
+          <label class="mb-2 block text-sm font-medium"> Product Name </label>
+
+          <input
+            type="text"
+            name="name"
+            value={product.name}
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium"> SKU </label>
+
+          <input
+            type="text"
+            name="sku"
+            value={product.sku}
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium"> Price </label>
+
+          <input
+            type="number"
+            name="price"
+            value={product.price}
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium"> Stock </label>
+
+          <input
+            type="number"
+            name="stock"
+            value={product.stock}
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+        </div>
+
+        <div class="flex space-between justify-center items-center gap-3">
+          <button
+            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition">
+            <a href="/products">Cancel</a>
+          </button>
+
+          <button
+            type="submit"
+            class="rounded-xl bg-primary px-8 py-3 text-white font-medium hover:opacity-90 transition">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</AppLayout>
+
+<script define:vars={{ id }}>
+  const form = document.querySelector("#edit-product-form");
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+
+    const payload = {
+      name: formData.get("name"),
+      sku: formData.get("sku"),
+      price: Number(formData.get("price")),
+      stock: Number(formData.get("stock")),
+    };
+
+    const response = await fetch(`/api/products/${id}`, {
+      method: "PUT",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      window.location.href = "/products";
+    } else {
+      alert("Failed to update product");
+    }
+  });
+</script>

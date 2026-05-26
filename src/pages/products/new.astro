@@ -1,0 +1,109 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+---
+
+<AppLayout title="New Product">
+  <div class="max-w-5xl mx-auto">
+    <div>
+      <h1 class="text-3xl font-bold">Create Product</h1>
+      <p class="mt-1 text-text-secondary">
+        Add a new product to your inventory
+      </p>
+    </div>
+
+    <form id="product-form" class="mt-8 rounded-2xl bg-white p-8 shadow-sm">
+      <div class="grid gap-6">
+        <div>
+          <label class="mb-2 block text-sm font-medium"> Product Name </label>
+          <input
+            type="text"
+            name="name"
+            required
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium"> SKU </label>
+          <input
+            type="text"
+            name="sku"
+            required
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium"> Price </label>
+          <input
+            type="number"
+            name="price"
+            required
+            min="0"
+            step="0.01"
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium"> Stock </label>
+          <input
+            type="number"
+            name="stock"
+            required
+            min="0"
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+        </div>
+
+        <div class="flex space-between justify-center items-center gap-3">
+          <button
+            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition">
+            <a href="/products">Cancel</a>
+          </button>
+          <button
+            type="submit"
+            class="rounded-xl bg-primary px-8 py-3 text-white font-medium hover:opacity-90 transition">
+            Create Product
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</AppLayout>
+
+<script>
+  // Solución 1: Tipamos el selector agregando "as HTMLFormElement"
+  const form = document.querySelector(
+    "#product-form"
+  ) as HTMLFormElement | null;
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    // Solución 2: Usar event.currentTarget asegura que el formulario existe y es el correcto
+    const targetForm = event.currentTarget as HTMLFormElement;
+    const formData = new FormData(targetForm);
+
+    const payload = {
+      name: formData.get("name"),
+      sku: formData.get("sku"),
+      price: Number(formData.get("price")),
+      stock: Number(formData.get("stock")),
+    };
+
+    const response = await fetch("/api/products/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      window.location.href = "/products";
+    } else {
+      alert("Failed to create product");
+    }
+  });
+</script>

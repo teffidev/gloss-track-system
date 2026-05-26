@@ -1,0 +1,68 @@
+---
+import { Image } from "astro:assets";
+import icono from "../../../public/icono.png";
+---
+
+<aside
+  class="fixed left-0 top-0 h-screen w-65 bg-sidebar text-white flex flex-col justify-between p-6"
+>
+  <div>
+    <div class="mb-10 flex items-center gap-3">
+      <Image
+        src={icono}
+        alt="Gloss Track"
+        width={50}
+        height={50}
+        class="rounded-full"
+      />
+
+      <div>
+        <h1 class="text-lg font-bold">Gloss Track</h1>
+        <p class="text-sm text-gray-400">Inventory System</p>
+      </div>
+    </div>
+
+    <nav class="flex flex-col gap-2">
+      <a
+        href="/dashboard"
+        class="rounded-xl px-4 py-3 hover:bg-white/10 transition"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="/products"
+        class="rounded-xl px-4 py-3 hover:bg-white/10 transition"
+      >
+        Products
+      </a>
+
+      <a
+        href="/suppliers"
+        class="rounded-xl px-4 py-3 hover:bg-white/10 transition"
+      >
+        Suppliers
+      </a>
+
+      <a
+        href="/users"
+        class="rounded-xl px-4 py-3 hover:bg-white/10 transition"
+      >
+        Users
+      </a>
+
+      <a
+        href="/settings"
+        class="rounded-xl px-4 py-3 hover:bg-white/10 transition"
+      >
+        Settings
+      </a>
+    </nav>
+  </div>
+
+  <button
+    class="rounded-xl bg-primary px-4 py-3 font-medium hover:opacity-90 transition"
+  >
+    Logout
+  </button>
+</aside>

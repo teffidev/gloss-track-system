@@ -1,0 +1,117 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import { prisma } from "@/lib/prisma";
+
+const products = await prisma.product.findMany({
+  orderBy: {
+    createdAt: "desc",
+  },
+});
+
+const checkLowStock = (stock: number) => stock <= 5;
+---
+
+<AppLayout title="Products">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold">Products</h1>
+
+      <p class="mt-1 text-text-secondary">Manage your inventory products</p>
+    </div>
+
+    <a
+      href="/products/new"
+      class="rounded-xl bg-primary px-8 py-3 text-white font-medium hover:opacity-90 transition">
+      New Product
+    </a>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-2xl bg-white shadow-sm">
+    <table class="w-full">
+      <thead class="border-b border-border bg-gray-50">
+        <tr>
+          <th class="px-6 py-4 text-left text-sm font-semibold"> Product </th>
+
+          <th class="px-6 py-4 text-left text-sm font-semibold"> SKU </th>
+
+          <th class="px-6 py-4 text-left text-sm font-semibold"> Price </th>
+
+          <th class="px-6 py-4 text-left text-sm font-semibold"> Stock </th>
+
+          <th class="px-6 py-4 text-left text-sm font-semibold"> Status </th>
+
+          <th class="px-6 py-4 text-left text-sm font-semibold"> Actions </th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          products.map((product) => (
+            <tr class="border-b border-border hover:bg-gray-50 transition">
+              <td class="px-6 py-4 font-medium"> {product.name} </td>
+              <td class="px-6 py-4 text-textSecondary"> {product.sku} </td>
+              <td class="px-6 py-4"> ${product.price} </td>
+              <td class="px-6 py-4"> {product.stock} </td>
+              <td class="px-6 py-4">
+                {checkLowStock(product.stock) ? (
+                  <span class="rounded-full bg-stock-low-bg px-3 py-1 text-sm font-medium text-stock-low-text">
+                    Low Stock
+                  </span>
+                ) : (
+                  <span class="rounded-full bg-stock-ok-bg px-3 py-1 text-sm font-medium text-stock-ok-text">
+                    In Stock
+                  </span>
+                )}
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex gap-3">
+                  <a
+                    href={`/products/${product.id}`}
+                    class="rounded-lg border border-border px-3 py-2 text-sm hover:bg-gray-100 transition">
+                    Edit
+                  </a>
+
+                  <button
+                    class="delete-button rounded-lg bg-red-100 px-3 py-2 text-sm text-red-600 hover:bg-red-200 transition"
+                    data-id={product.id}>
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</AppLayout>
+
+<script>
+  // Solución: Usamos un selector de tipo específico en querySelectorAll
+  const deleteButtons =
+    document.querySelectorAll<HTMLButtonElement>(".delete-button");
+
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      // Usar event.currentTarget asegura el tipo correcto del botón presionado
+      const targetButton = event.currentTarget as HTMLButtonElement;
+      const id = targetButton.dataset.id;
+
+      if (!id) return; // Validación de seguridad por si el ID no existe
+
+      const confirmed = confirm(
+        "Are you sure you want to delete this product?"
+      );
+      if (!confirmed) return;
+
+      const response = await fetch(`/api/products/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert("Failed to delete product");
+      }
+    });
+  });
+</script>
