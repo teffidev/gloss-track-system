@@ -1,0 +1,177 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+
+import { hasPermission } from "@/lib/permissions";
+
+if (!hasPermission(Astro.locals.user.role, "users", "create")) {
+  return Astro.redirect("/dashboard");
+}
+---
+
+<AppLayout title="New User">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold">Create User</h1>
+
+    <form id="create-user-form" class="mt-8 rounded-2xl bg-white p-8 shadow-sm">
+      <div class="grid gap-6">
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+        />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+        />
+
+        <div class="relative">
+          <input
+            id="password-input"
+            type="password"
+            name="password"
+            placeholder="Password"
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+          <button
+            type="button"
+            id="toggle-password"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            aria-label="Toggle password visibility">
+            <!-- Eye icon (visible cuando type="password") -->
+            <svg
+              id="icon-eye"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              ></path>
+            </svg>
+            <!-- Eye-off icon (visible cuando type="text") -->
+            <svg
+              id="icon-eye-off"
+              xmlns="http://www.w3.org/2000/svg"
+              class="hidden h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.477 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 4.411m0 0L21 21"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <select
+          name="role"
+          class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary">
+          <option value="employee"> Employee </option>
+          <option value="admin"> Admin </option>
+        </select>
+
+        <div class="flex space-between justify-center items-center gap-3">
+          <a
+            href="/users"
+            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition inline-block text-center">
+            Cancel
+          </a>
+          <button
+            type="submit"
+            class="rounded-xl bg-primary px-5 py-3 text-white">
+            Create User
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</AppLayout>
+
+<script>
+  declare global {
+    interface Window {
+      showToast: (message: string) => void;
+    }
+  }
+
+  const form = document.querySelector(
+    "#create-user-form"
+  ) as HTMLFormElement | null;
+
+  // 1. Tipamos correctamente los elementos para que TypeScript entienda .type y .classList
+  const toggleBtn = document.querySelector(
+    "#toggle-password"
+  ) as HTMLButtonElement | null;
+  const passwordInput = document.querySelector(
+    "#password-input"
+  ) as HTMLInputElement | null;
+  const iconEye = document.querySelector("#icon-eye") as SVGElement | null;
+  const iconEyeOff = document.querySelector(
+    "#icon-eye-off"
+  ) as SVGElement | null;
+
+  toggleBtn?.addEventListener("click", () => {
+    // Aseguramos que los elementos existan antes de operar
+    if (!passwordInput || !iconEye || !iconEyeOff) return;
+
+    const isPassword = passwordInput.type === "password";
+
+    // Cambiamos el tipo del input
+    passwordInput.type = isPassword ? "text" : "password";
+
+    // CORRECCIÓN DE LÓGICA:
+    // Si era password (y ahora es text), ocultamos el ojo abierto (true) y mostramos el ojo cerrado (false)
+    iconEye.classList.toggle("hidden", isPassword);
+    iconEyeOff.classList.toggle("hidden", !isPassword);
+  });
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const targetForm = event.currentTarget as HTMLFormElement;
+    const formData = new FormData(targetForm);
+
+    const payload = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      role: formData.get("role"),
+    };
+
+    const response = await fetch("/api/users", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      window.showToast("User created successfully");
+
+      setTimeout(() => {
+        window.location.href = "/users";
+      }, 1000);
+    } else {
+      alert("Failed to create user");
+    }
+  });
+</script>

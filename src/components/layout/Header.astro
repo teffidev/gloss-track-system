@@ -1,23 +1,26 @@
-<header
-  class="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-white px-8 py-5"
->
-  <div>
-    <h2 class="text-2xl font-bold text-textPrimary">Dashboard</h2>
+---
+const user = Astro.locals.user;
+---
 
-    <p class="text-sm text-textSecondary">Welcome back 👋</p>
+<header
+  class="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-white px-8 py-5">
+  <div>
+    <h2 class="text-lg font-semibold">
+      Welcome back,
+      {user?.name} 👋
+    </h2>
+
+    <p class="text-sm text-text-secondary">
+      {user?.email}
+    </p>
   </div>
 
-  <div class="flex items-center gap-4">
-    <input
-      type="text"
-      placeholder="Search..."
-      class="rounded-xl border border-border px-4 py-2 outline-none focus:border-primary"
-    />
-
-    <div
-      class="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-white font-bold"
-    >
-      E
-    </div>
+  <div class="flex items-center gap-3">
+    <span
+      class="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary capitalize">
+      {user?.role}
+    </span>
   </div>
 </header>
+
+

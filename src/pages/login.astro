@@ -2,8 +2,17 @@
 import "@/styles/global.css";
 import { Image } from "astro:assets";
 import logo from "../../public/logo.png";
+import { auth } from "@/lib/auth";
 
 const { title = "Gloss Track" } = Astro.props;
+
+const session = await auth.api.getSession({
+  headers: Astro.request.headers,
+});
+
+if (session) {
+  return Astro.redirect("/dashboard");
+}
 ---
 
 <html lang="en">
@@ -48,7 +57,9 @@ const { title = "Gloss Track" } = Astro.props;
         </div>
 
         <div>
-          <label class="mb-2 block text-text-secondary text-sm font-medium"> Password </label>
+          <label class="mb-2 block text-text-secondary text-sm font-medium">
+            Password
+          </label>
 
           <div class="relative">
             <input

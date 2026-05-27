@@ -1,5 +1,59 @@
 ---
-if (Astro.locals.user.role !== "admin") {
+import AppLayout from "@/layouts/AppLayout.astro";
+
+import { prisma } from "@/lib/prisma";
+
+import { hasPermission } from "@/lib/permissions";
+
+if (!hasPermission(Astro.locals.user.role, "users", "view")) {
   return Astro.redirect("/dashboard");
 }
+
+const users = await prisma.user.findMany({
+  orderBy: {
+    createdAt: "desc",
+  },
+});
 ---
+
+<AppLayout title="Users">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold">Users</h1>
+
+      <p class="mt-1 text-text-secondary">Manage system users</p>
+    </div>
+
+    <a
+      href="/users/new"
+      class="rounded-xl bg-primary px-5 py-3 font-medium text-white">
+      New User
+    </a>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-2xl bg-white shadow-sm">
+    <table class="w-full">
+      <thead class="border-b border-border bg-gray-50">
+        <tr>
+          <th class="px-6 py-4 text-left text-sm font-semibold"> Name </th>
+          <th class="px-6 py-4 text-left text-sm font-semibold"> Email </th>
+          <th class="px-6 py-4 text-left text-sm font-semibold"> Role </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {
+          users.map((user) => (
+            <tr class="border-b border-border">
+              <td class="px-6 py-4">{user.name}</td>
+              <td class="px-6 py-4">{user.email}</td>
+              <td class="px-6 py-4">
+                <span class="capitalize">{user.role}</span>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</AppLayout>
