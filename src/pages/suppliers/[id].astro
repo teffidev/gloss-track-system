@@ -1,0 +1,96 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import { prisma } from "@/lib/prisma";
+
+const supplier = await prisma.supplier.findUnique({
+  where: {
+    id: Astro.params.id,
+  },
+});
+
+if (!supplier) {
+  return Astro.redirect("/suppliers");
+}
+---
+
+<AppLayout title="Edit Supplier">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold">Edit Supplier</h1>
+    <p class="mt-1 text-text-secondary">Update supplier information</p>
+
+    <form
+      id="edit-supplier-form"
+      class="mt-8 rounded-2xl bg-white p-8 shadow-sm">
+      <div class="grid gap-6">
+        <input
+          type="text"
+          name="name"
+          value={supplier.name}
+          class="w-full rounded-xl border border-border bg-white px-4 py-3 outline-none focus:border-primary"
+        />
+
+        <input
+          type="email"
+          name="email"
+          value={supplier.email || ""}
+          class="w-full rounded-xl border border-border bg-white px-4 py-3 outline-none focus:border-primary"
+        />
+
+        <input
+          type="text"
+          name="phone"
+          value={supplier.phone || ""}
+          class="w-full rounded-xl border border-border bg-white px-4 py-3 outline-none focus:border-primary"
+        />
+
+        <div class="flex space-between justify-center items-center gap-3">
+          <a
+            href="/suppliers"
+            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition inline-block text-center">
+            Cancel
+          </a>
+
+          <button
+            type="submit"
+            class="rounded-xl bg-primary px-5 py-3 text-white">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</AppLayout>
+
+<script define:vars={{ id: supplier.id }}>
+  const form = document.querySelector("#edit-supplier-form");
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+
+    const payload = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+    };
+
+    const response = await fetch(`/api/suppliers/${id}`, {
+      method: "PUT",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      window.showToast("Supplier updated successfully");
+
+      setTimeout(() => {
+        window.location.href = "/suppliers";
+      }, 1000);
+    }
+  });
+</script>

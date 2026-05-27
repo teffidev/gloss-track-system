@@ -74,7 +74,6 @@ const checkLowStock = (stock: number) => stock <= 5;
   <div class="flex items-center justify-between">
     <div>
       <h1 class="text-3xl font-bold">Products</h1>
-
       <p class="mt-1 text-text-secondary">Manage your inventory products</p>
     </div>
 
@@ -109,7 +108,7 @@ const checkLowStock = (stock: number) => stock <= 5;
 
   <div class="mt-8 overflow-hidden rounded-2xl bg-white shadow-sm">
     <table class="w-full">
-      <thead class="border-b border-border bg-gray-50">
+      <thead class="border border-border bg-gray-50">
         <tr>
           <th class="px-6 py-4 text-left text-sm font-semibold"> Product </th>
           <th class="px-6 py-4 text-left text-sm font-semibold"> SKU </th>
@@ -123,9 +122,9 @@ const checkLowStock = (stock: number) => stock <= 5;
       <tbody>
         {
           products.map((product) => (
-            <tr class="border-b border-border hover:bg-gray-50 transition">
+            <tr class="border border-border hover:bg-gray-50 transition">
               <td class="px-6 py-4 font-medium"> {product.name} </td>
-              <td class="px-6 py-4 text-textSecondary"> {product.sku} </td>
+              <td class="px-6 py-4 text-text-secondary"> {product.sku} </td>
               <td class="px-6 py-4"> ${product.price} </td>
               <td class="px-6 py-4">
                 {" "}
@@ -197,6 +196,11 @@ const checkLowStock = (stock: number) => stock <= 5;
 </AppLayout>
 
 <script>
+  declare global {
+    interface Window {
+      showToast: (message: string) => void;
+    }
+  }
   // Solución: Usamos un selector de tipo específico en querySelectorAll
   const deleteButtons =
     document.querySelectorAll<HTMLButtonElement>(".delete-button");

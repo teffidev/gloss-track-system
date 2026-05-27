@@ -1,0 +1,95 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+---
+
+<AppLayout title="New Supplier">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold">Create Supplier</h1>
+    <p class="mt-1 text-text-secondary">Add a new supplier to your company</p>
+
+    <form
+      id="create-supplier-form"
+      class="mt-8 rounded-2xl bg-white p-8 shadow-sm">
+      <div class="grid gap-6">
+        <input
+          type="text"
+          name="name"
+          placeholder="Supplier name"
+          class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+        />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Supplier email"
+          class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+        />
+
+        <input
+          type="text"
+          name="phone"
+          placeholder="Supplier phone"
+          class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+        />
+
+        <div class="flex space-between justify-center items-center gap-3">
+          <a
+            href="/suppliers"
+            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition inline-block text-center">
+            Cancel
+          </a>
+          <button
+            type="submit"
+            class="rounded-xl bg-primary px-5 py-3 text-white">
+            Create Supplier
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</AppLayout>
+
+<script>
+  declare global {
+    interface Window {
+      showToast: (message: string) => void;
+    }
+  }
+
+  const form = document.querySelector(
+    "#create-supplier-form"
+  ) as HTMLFormElement | null;
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const targetForm = event.currentTarget as HTMLFormElement;
+    const formData = new FormData(targetForm);
+
+    const payload = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+    };
+
+    const response = await fetch("/api/suppliers", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      window.showToast("Supplier created successfully");
+
+      setTimeout(() => {
+        window.location.href = "/suppliers";
+      }, 1000);
+    } else {
+      alert("Failed to create supplier");
+    }
+  });
+</script>
