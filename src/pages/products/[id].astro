@@ -6,7 +6,17 @@ const { id } = Astro.params;
 
 const product = await prisma.product.findUnique({
   where: {
-    id,
+    id: Astro.params.id,
+  },
+
+  include: {
+    supplier: true,
+  },
+});
+
+const suppliers = await prisma.supplier.findMany({
+  orderBy: {
+    name: "asc",
   },
 });
 
@@ -27,47 +37,61 @@ if (!product) {
       class="mt-8 rounded-2xl bg-white p-8 shadow-sm">
       <div class="grid gap-6">
         <div>
-          <label class="mb-2 block text-sm font-medium"> Product Name </label>
-
           <input
             type="text"
             name="name"
+            placeholder="Product name"
             value={product.name}
             class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
           />
         </div>
 
         <div>
-          <label class="mb-2 block text-sm font-medium"> SKU </label>
-
           <input
             type="text"
             name="sku"
+            placeholder="Product SKU"
             value={product.sku}
             class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
           />
         </div>
 
         <div>
-          <label class="mb-2 block text-sm font-medium"> Price </label>
-
           <input
             type="number"
             name="price"
+            placeholder="Product price"
             value={product.price}
             class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
           />
         </div>
 
         <div>
-          <label class="mb-2 block text-sm font-medium"> Stock </label>
-
           <input
             type="number"
             name="stock"
+            placeholder="Product stock"
             value={product.stock}
             class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
           />
+        </div>
+
+        <div class="grid gap-2">
+          <select
+            name="supplierId"
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary">
+            <option value=""> No supplier </option>
+
+            {
+              suppliers.map((supplier) => (
+                <option
+                  value={supplier.id}
+                  selected={supplier.id === product.supplierId}>
+                  {supplier.name}
+                </option>
+              ))
+            }
+          </select>
         </div>
 
         <div class="flex space-between justify-center items-center gap-3">

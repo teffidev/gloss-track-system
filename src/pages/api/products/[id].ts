@@ -40,7 +40,11 @@ export const PUT: APIRoute = async ({ params, request }) => {
         id: params.id,
       },
 
-      data: validatedData,
+      data: {
+        ...validatedData,
+
+        supplierId: validatedData.supplierId || null,
+      },
     });
 
     return new Response(JSON.stringify(product), {
