@@ -1,30 +1,54 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #a0277c;
-  --color-sidebar: #1e1428;
-  --color-success: #1d9e75;
-  --color-stock-low-bg: #fcebeb;
-  --color-stock-low-text: #a32d2d;
-  --color-stock-ok-bg: #e1f5ee;
-  --color-stock-ok-text: #0f6e56;
-  --color-background: #f7f8fc;
-  --color-border: #e5e7eb;
+  --color-primary: #A0277C;
+  --color-sidebar: #1E1428;
+  --color-success: #1D9E75;
+  --color-stock-low-bg: #FCEBEB;
+  --color-stock-low-text: #A32D2D;
+  --color-stock-ok-bg: #E1F5EE;
+  --color-stock-ok-text: #0F6E56;
+  --color-background: #F7F8FC;
+  --color-border: #E5E7EB;
   --color-text-primary: #111827;
-  --color-text-secondary: #6b7280;
+  --color-text-secondary: #6B7280;
+  
+  /* Color personalizado para las tarjetas blancas */
+  --color-card-bg: #FFFFFF; 
 }
 
-html {
-  font-family: "Inter", sans-serif;
+/* ========================================== */
+/* CONFIGURACIÓN MODO OSCURO PARA TAILWIND V4 */
+/* ========================================== */
+@variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root.dark {
+    /* Redefinimos variables para el Modo Oscuro */
+    --color-background: #0B0F19;     /* Fondo general oscuro */
+    --color-card-bg: #161B26;        /* Fondo de tarjetas oscuro */
+    --color-border: #242B3D;         /* Bordes oscuros */
+    --color-text-primary: #F9FAFB;   /* Texto principal blanco */
+    --color-text-secondary: #9CA3AF; /* Texto secundario gris claro */
+    
+    /* Ajustes opcionales para el Sidebar en modo oscuro si lo deseas */
+    --color-sidebar: #0F0A1A;
+  }
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  background: #f7f8fc;
-  color: #111827;
+/* Estilos nativos base */
+html { 
+  font-family: 'Inter', sans-serif; 
 }
 
-* {
-  box-sizing: border-box;
+body { 
+  margin: 0; 
+  padding: 0; 
+  background-color: var(--color-background); 
+  color: var(--color-text-primary); 
+  transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+}
+
+* { 
+  box-sizing: border-box; 
 }

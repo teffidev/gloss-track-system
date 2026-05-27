@@ -1,6 +1,8 @@
 import { defineMiddleware } from "astro:middleware";
 import { auth } from "@/lib/auth";
-const protectedRoutes = ["/dashboard", "/products", "/suppliers", "/users"];
+
+const protectedRoutes = ["/dashboard", "/products", "/suppliers", "/users", "/settings"];
+
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const pathname = context.url.pathname;

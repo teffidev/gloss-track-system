@@ -1,0 +1,249 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+const user = Astro.locals.user;
+
+if (!user) {
+  return Astro.redirect("/login");
+}
+---
+
+<AppLayout title="Settings">
+  <div class="mx-auto max-w-6xl">
+    <div>
+      <h1 class="text-3xl font-bold">Settings</h1>
+      <p class="mt-1 text-text-secondary">
+        Manage your account settings and preferences
+      </p>
+    </div>
+
+    <!-- Contenedor Principal con Layout de Panel -->
+    <div class="mt-8 flex flex-col gap-8 md:flex-row">
+      <!-- Navegación de Ajustes (Sidebar de Configuración) -->
+      <aside class="w-full md:w-64 shrink-0">
+        <nav
+          class="flex flex-row gap-1 overflow-x-auto border-b border-border pb-2 md:flex-col md:border-b-0 md:pb-0"
+          id="settings-nav">
+          <button
+            data-target="profile-panel"
+            class="tab-btn active flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-primary bg-primary/10 whitespace-nowrap transition">
+            Profile
+          </button>
+          <button
+            data-target="security-panel"
+            class="tab-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-text-secondary hover:bg-gray-100 whitespace-nowrap transition">
+            Security
+          </button>
+          <button
+            data-target="appearance-panel"
+            class="tab-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-text-secondary hover:bg-gray-100 whitespace-nowrap transition">
+            Appearance
+          </button>
+          <button
+            data-target="company-panel"
+            class="tab-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-text-secondary hover:bg-gray-100 whitespace-nowrap transition">
+            Company
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Paneles de Contenido -->
+      <div
+        class="flex-1 bg-white rounded-2xl p-8 shadow-sm border border-border/50">
+        <!-- PANEL: PROFILE -->
+        <div id="profile-panel" class="settings-panel grid gap-6">
+          <div>
+            <h2 class="text-xl font-semibold">Profile Information</h2>
+            <p class="text-sm text-text-secondary mt-1">
+              Update your account's profile details and email address.
+            </p>
+          </div>
+          <form class="grid gap-4 max-w-xl">
+            <div>
+              <label class="mb-2 block text-sm font-medium">Name</label>
+              <input
+                type="text"
+                value={user?.name}
+                class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium">Email</label>
+              <input
+                type="email"
+                value={user?.email}
+                class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-fit rounded-xl bg-primary px-6 py-3 text-white font-medium hover:opacity-90 transition">
+              Save Changes
+            </button>
+          </form>
+        </div>
+
+        <!-- PANEL: SECURITY -->
+        <div id="security-panel" class="settings-panel hidden gap-6">
+          <div>
+            <h2 class="text-xl font-semibold">Update Password</h2>
+            <p class="text-sm text-text-secondary mt-1">
+              Ensure your account is using a long, random password to stay
+              secure.
+            </p>
+          </div>
+          <form class="grid gap-4 max-w-xl">
+            <div>
+              <label class="mb-2 block text-sm font-medium"
+                >Current Password</label
+              >
+              <input
+                type="password"
+                class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium">New Password</label>
+              <input
+                type="password"
+                class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-fit rounded-xl bg-primary px-6 py-3 text-white font-medium hover:opacity-90 transition">
+              Update Password
+            </button>
+          </form>
+        </div>
+
+        <!-- PANEL: APPEARANCE (Tema de la App) -->
+        <div id="appearance-panel" class="settings-panel hidden gap-6">
+          <div>
+            <h2 class="text-xl font-semibold">Interface Theme</h2>
+            <p class="text-sm text-text-secondary mt-1">
+              Customize how Gloss Track looks on your device.
+            </p>
+          </div>
+          <div class="max-w-xl">
+            <label class="mb-2 block text-sm font-medium"
+              >Theme Preference</label
+            >
+            <select
+              id="theme-select"
+              class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary bg-white">
+              <option value="light">Light Mode</option>
+              <option value="dark">Dark Mode</option>
+              <option value="system">System Default</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PANEL: COMPANY -->
+        <div id="company-panel" class="settings-panel hidden gap-6">
+          <div>
+            <h2 class="text-xl font-semibold">Company Profile</h2>
+            <p class="text-sm text-text-secondary mt-1">
+              Manage global details for your inventory management.
+            </p>
+          </div>
+          <form class="grid gap-4 max-w-xl">
+            <div>
+              <label class="mb-2 block text-sm font-medium">Company Name</label>
+              <input
+                type="text"
+                placeholder="Gloss Track Inc."
+                class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium">Company Email</label
+              >
+              <input
+                type="email"
+                placeholder="billing@glosstrack.com"
+                class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-fit rounded-xl bg-primary px-6 py-3 text-white font-medium hover:opacity-90 transition">
+              Save Company Info
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</AppLayout>
+
+<script>
+  // ==========================================
+  // LÓGICA DE PESTAÑAS (TABS)
+  // ==========================================
+  const tabButtons = document.querySelectorAll<HTMLButtonElement>(".tab-btn");
+  const panels = document.querySelectorAll<HTMLDivElement>(".settings-panel");
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const targetButton = e.currentTarget as HTMLButtonElement;
+      const targetPanelId = targetButton.dataset.target;
+
+      // Desactivar todos los botones
+      tabButtons.forEach((btn) => {
+        btn.classList.remove("text-primary", "bg-primary/10", "active");
+        btn.classList.add("text-text-secondary", "hover:bg-gray-100");
+      });
+
+      // Activar botón seleccionado
+      targetButton.classList.add("text-primary", "bg-primary/10", "active");
+      targetButton.classList.remove("text-text-secondary", "hover:bg-gray-100");
+
+      // Alternar visibilidad de paneles
+      panels.forEach((panel) => {
+        if (panel.id === targetPanelId) {
+          panel.classList.remove("hidden");
+        } else {
+          panel.classList.add("hidden");
+        }
+      });
+    });
+  });
+
+  // ==========================================
+  // LÓGICA DE CONTROL DE TEMA (DARK MODE)
+  // ==========================================
+  const themeSelect = document.querySelector(
+    "#theme-select"
+  ) as HTMLSelectElement | null;
+
+  if (themeSelect) {
+    // 1. Cargar preferencia guardada previamente
+    const savedTheme = localStorage.getItem("theme") || "system";
+    themeSelect.value = savedTheme;
+
+    // 2. Escuchar el cambio en el selector
+    themeSelect.addEventListener("change", (e) => {
+      const target = e.currentTarget as HTMLSelectElement;
+      const theme = target.value;
+
+      applyTheme(theme);
+    });
+  }
+
+  function applyTheme(theme: string) {
+    const root = document.documentElement;
+    localStorage.setItem("theme", theme);
+
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else if (theme === "light") {
+      root.classList.remove("dark");
+    } else {
+      // Si elige 'system', evaluamos las preferencias del sistema operativo
+      const systemPrefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      root.classList.toggle("dark", systemPrefersDark);
+    }
+  }
+</script>
