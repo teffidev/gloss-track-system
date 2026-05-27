@@ -53,7 +53,8 @@ const suppliers = await prisma.supplier.findMany();
 
           <select
             name="supplierId"
-            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary">
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          >
             <option value=""> Select supplier </option>
 
             {
@@ -77,12 +78,14 @@ const suppliers = await prisma.supplier.findMany();
 
         <div class="flex space-between justify-center items-center gap-3">
           <button
-            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition">
+            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition"
+          >
             <a href="/products">Cancel</a>
           </button>
           <button
             type="submit"
-            class="rounded-xl bg-primary px-8 py-3 text-white font-medium hover:opacity-90 transition">
+            class="rounded-xl bg-primary px-8 py-3 text-white font-medium hover:opacity-90 transition"
+          >
             Create Product
           </button>
         </div>

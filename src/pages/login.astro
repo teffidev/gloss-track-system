@@ -1,0 +1,71 @@
+---
+import "@/styles/global.css";
+---
+
+<html lang="en">
+  <body class="flex min-h-screen items-center justify-center bg-background">
+    <div class="w-full max-w-md rounded-3xl bg-white p-10 shadow-sm">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold">Welcome Back</h1>
+
+        <p class="mt-2 text-textSecondary">Login to continue</p>
+      </div>
+
+      <form id="login-form" class="space-y-6">
+        <div>
+          <label class="mb-2 block text-sm font-medium"> Email </label>
+
+          <input
+            type="email"
+            name="email"
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium"> Password </label>
+
+          <input
+            type="password"
+            name="password"
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="w-full rounded-xl bg-primary px-5 py-3 font-medium text-white hover:opacity-90"
+        >
+          Login
+        </button>
+      </form>
+    </div>
+
+    <script type="module">
+      import { authClient } from "/src/lib/auth-client.ts";
+
+      const form = document.querySelector("#login-form");
+
+      form?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+
+        const email = formData.get("email");
+        const password = formData.get("password");
+
+        const { error } = await authClient.signIn.email({
+          email,
+          password,
+        });
+
+        if (error) {
+          alert(error.message);
+          return;
+        }
+
+        window.location.href = "/dashboard";
+      });
+    </script>
+  </body>
+</html>

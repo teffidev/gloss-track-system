@@ -1,8 +1,3 @@
-import { auth } from "../../../lib/auth"; // import your Better Auth instance
-import type { APIRoute } from "astro";
+import { auth } from "@/lib/auth";
 
-export const prerender = false; // Not needed in 'server' mode
-
-export const ALL: APIRoute = async (ctx) => {
-  return auth.handler(ctx.request);
-};
+export const ALL = auth.handler;
