@@ -1,25 +1,208 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
+
+import { prisma } from "@/lib/prisma";
+
+const [
+  totalProducts,
+  totalSuppliers,
+  totalUsers,
+  lowStockProducts,
+  recentProducts,
+  recentSuppliers,
+  stockAggregation,
+] = await Promise.all([
+  prisma.product.count(),
+
+  prisma.supplier.count(),
+
+  prisma.user.count(),
+
+  prisma.product.count({
+    where: {
+      stock: {
+        lte: 5,
+      },
+    },
+  }),
+
+  prisma.product.findMany({
+    take: 5,
+
+    orderBy: {
+      createdAt: "desc",
+    },
+
+    include: {
+      supplier: true,
+    },
+  }),
+
+  prisma.supplier.findMany({
+    take: 5,
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  }),
+
+  prisma.product.aggregate({
+    _sum: {
+      stock: true,
+
+      price: true,
+    },
+  }),
+]);
+
+const inventoryValue = await prisma.product.findMany();
+
+const totalInventoryValue = inventoryValue.reduce(
+  (acc, product) => acc + product.price * product.stock,
+  0
+);
 ---
 
 <AppLayout title="Dashboard">
-  <div class="grid grid-cols-3 gap-6">
-    <div class="rounded-2xl bg-white p-6 shadow-sm">
-      <p class="text-text-secondary">Total Products</p>
+  <div>
+    <h1 class="text-3xl font-bold">Dashboard</h1>
 
-      <h3 class="mt-2 text-3xl font-bold">124</h3>
+    <p class="mt-1 text-text-secondary">General Information</p>
+  </div>
+
+  <!-- METRICS -->
+  <div class="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+    <!-- PRODUCTS -->
+    <div class="rounded-2xl bg-primary/20 p-6 shadow-sm">
+      <p class="text-sm text-text-secondary">Total Products</p>
+
+      <h2 class="mt-2 text-4xl font-bold">
+        {totalProducts}
+      </h2>
     </div>
 
-    <div class="rounded-2xl bg-white p-6 shadow-sm">
-      <p class="text-text-secondary">Low Stock</p>
+    <!-- SUPPLIERS -->
+    <div class="rounded-2xl bg-teal-50 p-6 shadow-sm">
+      <p class="text-sm text-text-secondary">Suppliers</p>
 
-      <h3 class="mt-2 text-3xl font-bold text-stock-low-text">12</h3>
+      <h2 class="mt-2 text-4xl font-bold">
+        {totalSuppliers}
+      </h2>
     </div>
 
-    <div class="rounded-2xl bg-white p-6 shadow-sm">
-      <p class="text-text-secondary">Suppliers</p>
+    <!-- USERS -->
+    <div class="rounded-2xl bg-yellow-50 p-6 shadow-sm">
+      <p class="text-sm text-text-secondary">Users</p>
 
-      <h3 class="mt-2 text-3xl font-bold">8</h3>
+      <h2 class="mt-2 text-4xl font-bold">
+        {totalUsers}
+      </h2>
+    </div>
+
+    <!-- LOW STOCK -->
+    <div class="rounded-2xl bg-red-50 p-6 shadow-sm">
+      <p class="text-sm text-text-secondary">Low Stock</p>
+
+      <h2 class="mt-2 text-4xl font-bold text-red-500">
+        {lowStockProducts}
+      </h2>
+    </div>
+  </div>
+
+  <!-- SECOND GRID -->
+  <div class="mt-8 grid gap-6 xl:grid-cols-3">
+    <!-- RECENT PRODUCTS -->
+    <div class="rounded-2xl bg-white p-6 shadow-sm xl:col-span-2">
+      <div class="flex items-center justify-between">
+        <h2 class="text-primary text-xl font-semibold">Recent Products</h2>
+
+        <a
+          href="/products"
+          class="rounded-lg bg-primary/10 px-4 py-2 text-sm font-semibold text-primary capitalize hover:bg-primary hover:text-white">
+          View all
+        </a>
+      </div>
+
+      <div class="mt-6 overflow-hidden rounded-xl border border-border">
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-sm"> Product </th>
+              <th class="px-4 py-3 text-left text-sm"> SKU </th>
+              <th class="px-4 py-3 text-left text-sm"> Stock </th>
+              <th class="px-4 py-3 text-left text-sm"> Supplier </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {
+              recentProducts.map((product) => (
+                <tr class="border-t border-border">
+                  <td class="px-4 py-4">{product.name}</td>
+
+                  <td class="px-4 py-4">{product.sku}</td>
+
+                  <td class="px-4 py-4">
+                    <span
+                      class:list={[
+                        "rounded-full px-3 py-1 text-xs font-medium",
+
+                        product.stock <= 5
+                          ? "bg-red-100 text-red-600"
+                          : "bg-green-100 text-green-700",
+                      ]}>
+                      {product.stock}
+                    </span>
+                  </td>
+
+                  <td class="px-4 py-4">{product.supplier?.name}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- QUICK STATS -->
+    <div class="space-y-6">
+      <!-- INVENTORY VALUE -->
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <p class="text-sm text-text-secondary">Inventory Value</p>
+
+        <h2 class="mt-2 text-primary text-3xl font-bold">
+          $
+          {totalInventoryValue.toLocaleString()}
+        </h2>
+      </div>
+
+      <!-- TOTAL STOCK -->
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <p class="text-sm text-text-secondary">Total Stock Units</p>
+
+        <h2 class="mt-2 text-success text-3xl font-bold">
+          {stockAggregation._sum.stock}
+        </h2>
+      </div>
+
+      <!-- RECENT SUPPLIERS -->
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="text-primary text-xl font-semibold">New Suppliers</h2>
+
+        <div class="mt-4 space-y-4">
+          {
+            recentSuppliers.map((supplier) => (
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="font-medium">{supplier.name}</p>
+
+                  <p class="text-sm text-text-secondary">{supplier.email}</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
     </div>
   </div>
 </AppLayout>
