@@ -115,7 +115,11 @@ if (!product) {
     });
 
     if (response.ok) {
-      window.location.href = "/products";
+      window.showToast("Product updated successfully");
+
+      setTimeout(() => {
+        window.location.href = "/products";
+      }, 1000);
     } else {
       alert("Failed to update product");
     }

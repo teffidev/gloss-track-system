@@ -2,14 +2,65 @@
 import AppLayout from "@/layouts/AppLayout.astro";
 import { prisma } from "@/lib/prisma";
 
+const search = Astro.url.searchParams.get("search") || "";
+
+const page = Number(Astro.url.searchParams.get("page") || "1");
+
+const take = 5;
+
+const skip = (page - 1) * take;
+
 const products = await prisma.product.findMany({
+  where: {
+    OR: [
+      {
+        name: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+
+      {
+        sku: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+    ],
+  },
+
   include: {
     supplier: true,
   },
   orderBy: {
     createdAt: "desc",
   },
+
+  take,
+  skip,
 });
+
+const totalProducts = await prisma.product.count({
+  where: {
+    OR: [
+      {
+        name: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+
+      {
+        sku: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+    ],
+  },
+});
+
+const totalPages = Math.ceil(totalProducts / take);
 
 const checkLowStock = (stock: number) => stock <= 5;
 ---
@@ -29,22 +80,34 @@ const checkLowStock = (stock: number) => stock <= 5;
     </a>
   </div>
 
+  <form class="mt-6">
+    <div class="flex gap-4">
+      <input
+        type="text"
+        name="search"
+        value={search}
+        placeholder="Search products by name or SKU..."
+        class="w-full rounded-xl border border-border bg-white px-4 py-3 outline-none focus:border-primary"
+      />
+
+      <button
+        type="submit"
+        class="rounded-xl bg-primary px-5 py-3 text-white font-medium">
+        Search
+      </button>
+    </div>
+  </form>
+
   <div class="mt-8 overflow-hidden rounded-2xl bg-white shadow-sm">
     <table class="w-full">
       <thead class="border-b border-border bg-gray-50">
         <tr>
           <th class="px-6 py-4 text-left text-sm font-semibold"> Product </th>
-
           <th class="px-6 py-4 text-left text-sm font-semibold"> SKU </th>
-
           <th class="px-6 py-4 text-left text-sm font-semibold"> Price </th>
-
           <th class="px-6 py-4 text-left text-sm font-semibold"> Supplier </th>
-
           <th class="px-6 py-4 text-left text-sm font-semibold"> Stock </th>
-
           <th class="px-6 py-4 text-left text-sm font-semibold"> Status </th>
-
           <th class="px-6 py-4 text-left text-sm font-semibold"> Actions </th>
         </tr>
       </thead>
@@ -55,7 +118,10 @@ const checkLowStock = (stock: number) => stock <= 5;
               <td class="px-6 py-4 font-medium"> {product.name} </td>
               <td class="px-6 py-4 text-textSecondary"> {product.sku} </td>
               <td class="px-6 py-4"> ${product.price} </td>
-              <td class="px-6 py-4"> {product.supplier?.name || "No supplier"} </td>
+              <td class="px-6 py-4">
+                {" "}
+                {product.supplier?.name || "No supplier"}{" "}
+              </td>
               <td class="px-6 py-4"> {product.stock} </td>
               <td class="px-6 py-4">
                 {checkLowStock(product.stock) ? (
@@ -88,6 +154,34 @@ const checkLowStock = (stock: number) => stock <= 5;
         }
       </tbody>
     </table>
+
+    <div class="my-4 mx-6 mt-8 flex items-center justify-center gap-2">
+      <p class="text-sm text-text-secondary">
+        Page {page} of {totalPages}
+      </p>
+
+      <div class="flex gap-2">
+        {
+          page > 1 && (
+            <a
+              href={`/products?page=${page - 1}&search=${search}`}
+              class="rounded-lg border border-primary text-primary font-medium bg-white px-4 py-2 hover:bg-gray-100">
+              Previous
+            </a>
+          )
+        }
+
+        {
+          page < totalPages && (
+            <a
+              href={`/products?page=${page + 1}&search=${search}`}
+              class="rounded-lg border border-primary text-primary font-medium bg-white px-8 py-2 hover:bg-gray-100">
+              Next
+            </a>
+          )
+        }
+      </div>
+    </div>
   </div>
 </AppLayout>
 
@@ -114,7 +208,11 @@ const checkLowStock = (stock: number) => stock <= 5;
       });
 
       if (response.ok) {
-        window.location.reload();
+        window.showToast("Product deleted successfully");
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
         alert("Failed to delete product");
       }

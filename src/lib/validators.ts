@@ -5,7 +5,7 @@ export const productSchema = z.object({
   sku: z.string().min(3, "SKU is required"),
   price: z.coerce.number().positive("Price must be positive"),
   stock: z.coerce.number().min(0, "Stock cannot be negative"),
-  supplierId: z.string().optional(),
+  supplierId: z.string().nullable().optional(),
 });
 
 export type ProductInput = z.infer<typeof productSchema>;

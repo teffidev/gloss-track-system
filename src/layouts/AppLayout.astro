@@ -3,6 +3,7 @@ import "@/styles/global.css";
 
 import Sidebar from "@/components/layout/Sidebar.astro";
 import Header from "@/components/layout/Header.astro";
+import Toast from "@/components/ui/Toast.astro";
 
 const { title = "Gloss Track" } = Astro.props;
 ---
@@ -25,6 +26,7 @@ const { title = "Gloss Track" } = Astro.props;
     <title>{title}</title>
   </head>
   <body class="bg-background">
+    <Toast />
     <div class="flex min-h-screen">
       <Sidebar />
 
