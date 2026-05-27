@@ -1,9 +1,13 @@
 ---
-import "@/styles/global.css";
----
+import { auth } from "@/lib/auth";
 
-<html lang="en">
-  <body>
-    <h1>Gloss Track</h1>
-  </body>
-</html>
+const session = await auth.api.getSession({
+  headers: Astro.request.headers,
+});
+
+if (session) {
+  return Astro.redirect("/dashboard");
+}
+
+return Astro.redirect("/login");
+---

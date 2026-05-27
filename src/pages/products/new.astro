@@ -1,8 +1,13 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
+import { hasPermission } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 
 const suppliers = await prisma.supplier.findMany();
+
+if (!hasPermission(Astro.locals.user.role, "products", "create")) {
+  return Astro.redirect("/dashboard");
+}
 ---
 
 <AppLayout title="New Product">
@@ -53,8 +58,7 @@ const suppliers = await prisma.supplier.findMany();
 
           <select
             name="supplierId"
-            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
-          >
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary">
             <option value=""> Select supplier </option>
 
             {
@@ -77,15 +81,14 @@ const suppliers = await prisma.supplier.findMany();
         </div>
 
         <div class="flex space-between justify-center items-center gap-3">
-          <button
-            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition"
-          >
-            <a href="/products">Cancel</a>
-          </button>
+          <a
+            href="/products"
+            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition inline-block text-center">
+            Cancel
+          </a>
           <button
             type="submit"
-            class="rounded-xl bg-primary px-8 py-3 text-white font-medium hover:opacity-90 transition"
-          >
+            class="rounded-xl bg-primary px-8 py-3 text-white font-medium hover:opacity-90 transition">
             Create Product
           </button>
         </div>
@@ -95,7 +98,13 @@ const suppliers = await prisma.supplier.findMany();
 </AppLayout>
 
 <script>
-  // Solución 1: Tipamos el selector agregando "as HTMLFormElement"
+  // 1. Declaramos la extensión de la interfaz Window para que TypeScript la reconozca
+  declare global {
+    interface Window {
+      showToast: (message: string) => void;
+    }
+  }
+
   const form = document.querySelector(
     "#product-form"
   ) as HTMLFormElement | null;
@@ -103,7 +112,6 @@ const suppliers = await prisma.supplier.findMany();
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    // Solución 2: Usar event.currentTarget asegura que el formulario existe y es el correcto
     const targetForm = event.currentTarget as HTMLFormElement;
     const formData = new FormData(targetForm);
 
@@ -124,6 +132,7 @@ const suppliers = await prisma.supplier.findMany();
     });
 
     if (response.ok) {
+      // 2. Ahora puedes usarlo libremente sin errores de compilación ts(2339)
       window.showToast("Product created successfully");
 
       setTimeout(() => {
