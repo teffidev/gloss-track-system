@@ -49,8 +49,7 @@ const totalPages = Math.ceil(totalSuppliers / take);
 
     <a
       href="/suppliers/new"
-      class="rounded-xl bg-primary px-5 py-3 font-medium text-white"
-    >
+      class="rounded-xl bg-primary px-5 py-3 font-medium text-white">
       New Supplier
     </a>
   </div>
@@ -61,8 +60,8 @@ const totalPages = Math.ceil(totalSuppliers / take);
         type="text"
         name="search"
         value={search}
-        placeholder="Search supplier..."
-        class="w-full rounded-xl border border-border bg-white px-4 py-3"
+        placeholder="Search supplier...."
+        class="w-full rounded-xl border border-border bg-white px-4 py-3 outline-none focus:border-primary"
       />
 
       <button type="submit" class="rounded-xl bg-primary px-5 py-3 text-white">
@@ -95,15 +94,13 @@ const totalPages = Math.ceil(totalSuppliers / take);
                 <div class="flex gap-3">
                   <a
                     href={`/suppliers/${supplier.id}`}
-                    class="rounded-lg border border-border px-3 py-2"
-                  >
+                    class="rounded-lg border border-border px-3 py-2">
                     Edit
                   </a>
 
                   <button
                     class="delete-button rounded-lg bg-red-100 px-3 py-2 text-red-600"
-                    data-id={supplier.id}
-                  >
+                    data-id={supplier.id}>
                     Delete
                   </button>
                 </div>
@@ -123,8 +120,7 @@ const totalPages = Math.ceil(totalSuppliers / take);
           page > 1 && (
             <a
               href={`/suppliers?page=${page - 1}&search=${search}`}
-              class="rounded-lg border border-primary text-primary font-medium bg-white px-4 py-2 hover:bg-gray-100"
-            >
+              class="rounded-lg border border-primary text-primary font-medium bg-white px-4 py-2 hover:bg-gray-100">
               Previous
             </a>
           )
@@ -134,8 +130,7 @@ const totalPages = Math.ceil(totalSuppliers / take);
           page < totalPages && (
             <a
               href={`/suppliers?page=${page + 1}&search=${search}`}
-              class="rounded-lg border border-primary text-primary font-medium bg-white px-8 py-2 hover:bg-gray-100"
-            >
+              class="rounded-lg border border-primary text-primary font-medium bg-white px-8 py-2 hover:bg-gray-100">
               Next
             </a>
           )
