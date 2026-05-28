@@ -34,7 +34,8 @@ if (!product) {
 
     <form
       id="edit-product-form"
-      class="mt-8 rounded-2xl bg-white p-8 shadow-sm">
+      class="mt-8 rounded-2xl bg-white p-8 shadow-sm"
+    >
       <div class="grid gap-6">
         <div>
           <input
@@ -79,14 +80,16 @@ if (!product) {
         <div class="grid gap-2">
           <select
             name="supplierId"
-            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary">
+            class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+          >
             <option value=""> No supplier </option>
 
             {
               suppliers.map((supplier) => (
                 <option
                   value={supplier.id}
-                  selected={supplier.id === product.supplierId}>
+                  selected={supplier.id === product.supplierId}
+                >
                   {supplier.name}
                 </option>
               ))
@@ -97,13 +100,15 @@ if (!product) {
         <div class="flex space-between justify-center items-center gap-3">
           <a
             href="/products"
-            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition inline-block text-center">
+            class="rounded-xl bg-sidebar px-8 py-3 text-white font-medium hover:opacity-90 transition inline-block text-center"
+          >
             Cancel
           </a>
 
           <button
             type="submit"
-            class="rounded-xl bg-primary px-8 py-3 text-white font-medium hover:opacity-90 transition">
+            class="rounded-xl bg-primary px-8 py-3 text-white font-medium hover:opacity-90 transition"
+          >
             Save Changes
           </button>
         </div>
