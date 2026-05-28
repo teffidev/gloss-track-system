@@ -104,14 +104,26 @@ const user = Astro.locals.user;
   </button>
 </aside>
 
-<script type="module">
-  import { authClient } from "/src/lib/auth-client.ts";
+<script>
+  import { authClient } from "@/lib/auth-client";
 
-  const logoutButton = document.querySelector("#logout-button");
+  // Función para inicializar el evento del botón de cerrar sesión
+  const initLogout = () => {
+    const logoutButton = document.querySelector("#logout-button");
 
-  logoutButton?.addEventListener("click", async () => {
-    await authClient.signOut();
+    logoutButton?.addEventListener("click", async () => {
+      try {
+        // Ejecutamos el método signOut de Better Auth
+        await authClient.signOut();
 
-    window.location.href = "/login";
-  });
+        // Redirigimos al login de manera limpia
+        window.location.href = "/login";
+      } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+        alert("No se pudo cerrar la sesión. Inténtalo de nuevo.");
+      }
+    });
+  };
+  initLogout();
+  document.addEventListener("astro:after-swap", initLogout);
 </script>
