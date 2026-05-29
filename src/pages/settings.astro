@@ -22,30 +22,25 @@ if (!user) {
       <aside class="w-full md:w-64 shrink-0">
         <nav
           class="flex flex-row gap-1 overflow-x-auto border-b border-border pb-2 md:flex-col md:border-b-0 md:pb-0"
-          id="settings-nav"
-        >
+          id="settings-nav">
           <button
             data-target="profile-panel"
-            class="tab-btn active flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-primary bg-primary/10 whitespace-nowrap transition"
-          >
+            class="tab-btn active flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-primary bg-primary/10 whitespace-nowrap transition">
             Profile
           </button>
           <button
             data-target="security-panel"
-            class="tab-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-text-secondary hover:bg-gray-100 whitespace-nowrap transition"
-          >
+            class="tab-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-text-secondary hover:bg-gray-100 whitespace-nowrap transition">
             Security
           </button>
           <button
             data-target="appearance-panel"
-            class="tab-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-text-secondary hover:bg-gray-100 whitespace-nowrap transition"
-          >
+            class="tab-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-text-secondary hover:bg-gray-100 whitespace-nowrap transition">
             Appearance
           </button>
           <button
             data-target="company-panel"
-            class="tab-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-text-secondary hover:bg-gray-100 whitespace-nowrap transition"
-          >
+            class="tab-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-text-secondary hover:bg-gray-100 whitespace-nowrap transition">
             Company
           </button>
         </nav>
@@ -53,8 +48,7 @@ if (!user) {
 
       <!-- Paneles de Contenido -->
       <div
-        class="flex-1 bg-white rounded-2xl p-8 shadow-sm border border-border/50"
-      >
+        class="flex-1 bg-white rounded-2xl p-8 shadow-sm border border-border/50">
         <!-- PANEL: PROFILE -->
         <div id="profile-panel" class="settings-panel grid gap-6">
           <div>
@@ -82,8 +76,7 @@ if (!user) {
             </div>
             <button
               type="submit"
-              class="w-fit rounded-xl bg-primary px-6 py-3 text-white font-medium hover:opacity-90 transition"
-            >
+              class="w-fit rounded-xl bg-primary px-6 py-3 text-white font-medium hover:opacity-90 transition">
               Save Changes
             </button>
           </form>
@@ -117,8 +110,7 @@ if (!user) {
             </div>
             <button
               type="submit"
-              class="w-fit rounded-xl bg-primary px-6 py-3 text-white font-medium hover:opacity-90 transition"
-            >
+              class="w-fit rounded-xl bg-primary px-6 py-3 text-white font-medium hover:opacity-90 transition">
               Update Password
             </button>
           </form>
@@ -138,8 +130,7 @@ if (!user) {
             >
             <select
               id="theme-select"
-              class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary bg-white"
-            >
+              class="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary bg-white">
               <option value="light">Light Mode</option>
               <option value="dark">Dark Mode</option>
               <option value="system">System Default</option>
@@ -175,8 +166,7 @@ if (!user) {
             </div>
             <button
               type="submit"
-              class="w-fit rounded-xl bg-primary px-6 py-3 text-white font-medium hover:opacity-90 transition"
-            >
+              class="w-fit rounded-xl bg-primary px-6 py-3 text-white font-medium hover:opacity-90 transition">
               Save Company Info
             </button>
           </form>
@@ -198,17 +188,14 @@ if (!user) {
       const targetButton = e.currentTarget as HTMLButtonElement;
       const targetPanelId = targetButton.dataset.target;
 
-      // Desactivar todos los botones
       tabButtons.forEach((btn) => {
         btn.classList.remove("text-primary", "bg-primary/10", "active");
         btn.classList.add("text-text-secondary", "hover:bg-gray-100");
       });
 
-      // Activar botón seleccionado
       targetButton.classList.add("text-primary", "bg-primary/10", "active");
       targetButton.classList.remove("text-text-secondary", "hover:bg-gray-100");
 
-      // Alternar visibilidad de paneles
       panels.forEach((panel) => {
         if (panel.id === targetPanelId) {
           panel.classList.remove("hidden");
@@ -218,42 +205,4 @@ if (!user) {
       });
     });
   });
-
-  // ==========================================
-  // LÓGICA DE CONTROL DE TEMA (DARK MODE)
-  // ==========================================
-  const themeSelect = document.querySelector(
-    "#theme-select"
-  ) as HTMLSelectElement | null;
-
-  if (themeSelect) {
-    // 1. Cargar preferencia guardada previamente
-    const savedTheme = localStorage.getItem("theme") || "system";
-    themeSelect.value = savedTheme;
-
-    // 2. Escuchar el cambio en el selector
-    themeSelect.addEventListener("change", (e) => {
-      const target = e.currentTarget as HTMLSelectElement;
-      const theme = target.value;
-
-      applyTheme(theme);
-    });
-  }
-
-  function applyTheme(theme: string) {
-    const root = document.documentElement;
-    localStorage.setItem("theme", theme);
-
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else if (theme === "light") {
-      root.classList.remove("dark");
-    } else {
-      // Si elige 'system', evaluamos las preferencias del sistema operativo
-      const systemPrefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      root.classList.toggle("dark", systemPrefersDark);
-    }
-  }
 </script>
